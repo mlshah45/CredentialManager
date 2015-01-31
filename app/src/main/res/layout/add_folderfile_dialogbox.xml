@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Folder"
+        android:id="@+id/isFolderCheckBox"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:paddingTop="12dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddFolderNameOrTitleEditTextView"
+        android:layout_below="@+id/isFolderCheckBox"
+        android:layout_centerHorizontal="true"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:hint="Title eg: gmail"
+        android:gravity="center"
+        android:padding="8dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddIdEditTextView"
+        android:layout_below="@+id/AddFolderNameOrTitleEditTextView"
+        android:layout_centerHorizontal="true"
+        android:hint="Id eg: 1234@gmail.com"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="8dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddPasswordEditTextView"
+        android:layout_below="@+id/AddIdEditTextView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:hint="Password"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:padding="8dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AddPasswordEditTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="8dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:id="@+id/AddOkButton"
+            android:layout_weight="1"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/AddCancelButton"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="19sp" />
+    </LinearLayout>
+
+</RelativeLayout>
