@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_folder_dialog_message"
+        android:id="@+id/DeleteFolderDialogTextView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:textSize="19sp"
+        android:padding="8dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/DeleteFolderDialogTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="8dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:id="@+id/DelleteFolderDialogDeleteButton"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open"
+            android:id="@+id/DeleteFolderDialogOpenButton"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="1" />
+    </LinearLayout>
+</RelativeLayout>

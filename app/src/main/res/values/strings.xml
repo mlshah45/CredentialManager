@@ -4,5 +4,6 @@
     <string name="app_name">LoginStore</string>
     <string name="dialogbox_title">Enter Password</string>
     <string name="action_settings">Settings</string>
+    <string name="delete_folder_dialog_message">Delete Folder or Open it?</string>
 
 </resources>

@@ -197,6 +197,7 @@ Log.d("here","stage1 reached");
     private static final String KEY_FTITLE = "title";
     private static final String KEY_FID = "id";
     private static final String KEY_FPASSWORD = "pwd";
+    private static final String No_TITLE="no_title";
 
     private static final String[] FCOLUMNS = {KEY_FPID,KEY_FFolder,KEY_FTITLE,KEY_FID,KEY_FPASSWORD};
 
@@ -209,17 +210,20 @@ Log.d("here","stage1 reached");
         ContentValues values = new ContentValues();
         values.put(KEY_FFolder,foldersT.getFolder()); //get Folder
         if(foldersT.getTitle()!=null) {
-            List<FoldersTable> folderTList = getAllFolderCredentials(foldersT.getFolder());
-            if(folderTList.size()==1&&folderTList.get(0).getTitle().isEmpty())
-            {
-                updateFolderCredential(foldersT,foldersT);
-                db.close();
-                return;
-            }
+//            List<FoldersTable> folderTList = getAllFolderCredentials(foldersT.getFolder());
+//            if(folderTList.size()==1&&folderTList.get(0).getTitle().isEmpty())
+//            {
+//                updateFolderCredential(foldersT,foldersT);
+//                db.close();
+//                return;
+//            }
 
             values.put(KEY_FTITLE, foldersT.getTitle()); // get title
             values.put(KEY_FID, foldersT.getId()); // get author
             values.put(KEY_FPASSWORD, foldersT.getPwd()); //get password
+        }
+        else{
+            values.put(KEY_FTITLE,No_TITLE);
         }
 
 
@@ -271,8 +275,8 @@ Log.d("addFOlder()","added");
         List<FoldersTable> folderTList = new ArrayList<FoldersTable>();
 
         // 1. build the query
-        String query = "SELECT  title FROM " + TABLE_FOLDERS +"WHERE folder="+folder;
-        Log.d("here","stage1 reached");
+        String query = "SELECT  * FROM " + TABLE_FOLDERS +" WHERE folder = \'"+folder+"\'";
+        Log.d(query,"stage1 reached");
         // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -281,16 +285,15 @@ Log.d("addFOlder()","added");
         FoldersTable folderT = null;
         if (cursor.moveToFirst()) {
             do {
+                Log.d("inside get all folders ",cursor.getString(1) );
                 folderT = new FoldersTable();
-                if(!cursor.getString(0).isEmpty()) {
-                    Log.d("here", cursor.getString(0));
-                    // credentials.setPid(Integer.parseInt(cursor.getString(0)));
-                    folderT.setTitle(cursor.getString(0));
-                    // credentials.setId(cursor.getString(2));
-                    // credentials.setPwd(cursor.getString(3));
+                if(!(cursor.getString(2).equals(null)||cursor.getString(2).isEmpty())) {
+                    Log.d("here", cursor.getString(2));
 
-                    // Add book to books
-                    folderTList.add(folderT);
+                        folderT.setTitle(cursor.getString(2));
+
+                        folderTList.add(folderT);
+
                 }
             } while (cursor.moveToNext());
         }
@@ -379,4 +382,19 @@ Log.d("getAllFolder","reached here inside loop");
     }
 
 
+    public void deleteEntireFolder(String folderName) {
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // 2. delete
+        db.delete(TABLE_FOLDERS, //table name
+                KEY_FFolder+" =?",  // selections
+                new String[] {folderName }); //selections args
+
+        // 3. close
+        db.close();
+
+        //log
+        Log.d("deleteCredential", folderName);
+    }
 }

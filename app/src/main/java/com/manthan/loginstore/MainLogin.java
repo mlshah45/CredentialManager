@@ -25,8 +25,10 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
+// beautify, add settings main +- 10, add backup, add initial popup for explanation, improve code
 
 public class MainLogin extends Activity {
 
@@ -38,6 +40,7 @@ public class MainLogin extends Activity {
    AlertDialog AdderD, ShowD, EditD;
     DatabaseHelper dbHelper;
     static  final String NameOfTheFolder = "FolderName";
+    HashMap<String,String> folderNamesHM, fileNamesHM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +106,8 @@ public class MainLogin extends Activity {
 
         List<CredentialsTable> all_credentials = dbHelper.getAllCredentials();
         List<FoldersTable> all_folders = dbHelper.getAllFolder();
+        fileNamesHM = new HashMap<String,String>();
+        folderNamesHM = new HashMap<String, String>();
 
         list = new ArrayList<ListElements>();
 Log.d("stage 2", "populateview");
@@ -112,6 +117,7 @@ Log.d("stage 2", "populateview");
             le.setName(all_folders.get(j).getFolder());
             le.setFolder(true);
             list.add(le);
+            folderNamesHM.put(all_folders.get(j).getFolder(),all_folders.get(j).getFolder());
         }
 
         for(int i=0;i<all_credentials.size();i++)
@@ -121,6 +127,7 @@ Log.d("stage 2", "populateview");
             le.setName(all_credentials.get(i).getTitle());
             le.setFolder(false);
             list.add(le);
+            fileNamesHM.put(all_credentials.get(i).getTitle(),all_credentials.get(i).getTitle());
         }
 
        CustomAdapter adapter = new CustomAdapter(this,R.layout.list_row,list);
@@ -133,12 +140,70 @@ Log.d("stage 2", "populateview");
     private class OnItemCLick implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, final int position, final long l) {
-            ListElements le = (ListElements) adapterView.getItemAtPosition(position);
+            final ListElements le = (ListElements) adapterView.getItemAtPosition(position);
             if(le.isFolder())
             {
-                Intent intent = new Intent(MainLogin.this,InFolder.class);
-                intent.putExtra(NameOfTheFolder,le.getName().toString());
-                startActivity(intent);
+                LayoutInflater layoutInflator = LayoutInflater.from(MainLogin.this);
+                View DeleteOpenFolder_DialogBox = layoutInflator.inflate(R.layout.delete_folder_dialog, null);
+                //set alertdialog view to delete_folder_dialogbox.xml
+                final AlertDialog.Builder DeleteOpenFolderDialog = new AlertDialog.Builder(MainLogin.this);
+                DeleteOpenFolderDialog.setView(DeleteOpenFolder_DialogBox);
+
+                Button deleteFolderButton = (Button) DeleteOpenFolder_DialogBox.findViewById(R.id.DelleteFolderDialogDeleteButton);
+                Button openFolderButton = (Button) DeleteOpenFolder_DialogBox.findViewById(R.id.DeleteFolderDialogOpenButton);
+                DeleteOpenFolderDialog.setCancelable(true);
+                final AlertDialog deleteopenFolderD =DeleteOpenFolderDialog.create();
+                deleteopenFolderD.show();
+
+openFolderButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        deleteopenFolderD.dismiss();
+        Intent intent = new Intent(MainLogin.this,InFolder.class);
+        intent.putExtra(NameOfTheFolder,le.getName().toString());
+        startActivity(intent);
+    }
+});
+                deleteFolderButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        deleteopenFolderD.dismiss();
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                MainLogin.this);
+
+                        // set title
+                        alertDialogBuilder.setTitle("Are you sure?");
+
+                        // set dialog message
+                        alertDialogBuilder
+                                .setMessage("This will delete the entire folder")
+                                .setCancelable(true)
+                                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dbHelper.deleteEntireFolder(le.getName().toString());
+                                        folderNamesHM.remove(le.getName().toString());
+                                        list.remove(position);
+                                        CustomAdapter adapter =  (CustomAdapter)MainListView.getAdapter();
+                                        adapter.notifyDataSetChanged();
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // if this button is clicked, just close
+                                        // the dialog box and do nothing
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        // create alert dialog
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        // show it
+                        alertDialog.show();
+                    }
+                });
+
             }
             else
             {
@@ -176,6 +241,7 @@ Log.d("stage 2", "populateview");
                     public void onClick(View view) {
                         CredentialsTable credentialsToDelete = new CredentialsTable();
                         credentialsToDelete.setTitle(credential.getTitle());
+                        fileNamesHM.remove(credential.getTitle());
                        dbHelper.deleteCredential(credentialsToDelete);
                         populateListView();
                         ShowD.dismiss();
@@ -216,12 +282,14 @@ Log.d("stage 2", "populateview");
                       okEditDialogButton.setOnClickListener(new View.OnClickListener() {
                           @Override
                           public void onClick(View view) {
-                              if(!(TitleEditDialogEditText.getText().toString().isEmpty()||IdEditDialogTextView.getText().toString().isEmpty()||PasswordEditDialogTextView.getText().toString().isEmpty()))
+                              if(!(TitleEditDialogEditText.getText().toString().isEmpty()||IdEditDialogTextView.getText().toString().isEmpty()||PasswordEditDialogTextView.getText().toString().isEmpty())&&!fileNamesHM.containsKey(TitleEditDialogEditText.getText().toString()))
                               {
                                   ListElements lee = new ListElements();
                                   lee.setFolder(false);
                                   lee.setName(TitleEditDialogEditText.getText().toString());
+                                  fileNamesHM.remove(list.get(position).getName());
                                   list.set(position,lee);
+                                  fileNamesHM.put(lee.getName(),lee.getName());
                                   CredentialsTable new_credential = new CredentialsTable();
 
                                   new_credential.setPwd(PasswordEditDialogTextView.getText().toString());
@@ -237,7 +305,10 @@ Log.d("stage 2", "populateview");
                                   EditD.dismiss();
                               }
                               else{
-                                  Toast toast = Toast.makeText(MainLogin.this, "Some fields are missing",Toast.LENGTH_SHORT);
+                                  String toastText="Some fields are missing";
+                                  if(fileNamesHM.containsKey(TitleEditDialogEditText.getText().toString()))
+                                      toastText = "Title already exists";
+                                  Toast toast = Toast.makeText(MainLogin.this,toastText ,Toast.LENGTH_SHORT);
                                   toast.show();
                               }
                           }
@@ -308,22 +379,27 @@ private View.OnClickListener addDialogOkButtonListener = new View.OnClickListene
         FoldersTable folderT = new FoldersTable();
         if(isFolderCheckBox.isChecked())
         {
-            if(!FolderNameOrTitleEditText.getText().toString().isEmpty())
+            if(!FolderNameOrTitleEditText.getText().toString().isEmpty()&&!folderNamesHM.containsValue(FolderNameOrTitleEditText.getText().toString()))
             {
                 ListElements lee = new ListElements();
                 lee.setFolder(true);
-                lee.setName(FolderNameOrTitleEditText.getText().toString());
+                lee.setName(FolderNameOrTitleEditText.getText().toString().trim());
+                folderNamesHM.put(FolderNameOrTitleEditText.getText().toString().trim(),FolderNameOrTitleEditText.getText().toString().trim());
                 list.add(lee);
-                folderT.setFolder(FolderNameOrTitleEditText.getText().toString());
+                folderT.setFolder(FolderNameOrTitleEditText.getText().toString().trim());
                 dbHelper.addFolderCredential(folderT);
                 CustomAdapter adapter = (CustomAdapter) MainListView.getAdapter();
                 adapter.notifyDataSetChanged();
                 toastFlag=false;
                 AdderD.dismiss();
             }
+            else  if(folderNamesHM.containsValue(FolderNameOrTitleEditText.getText().toString()))
+            {
+                    toastText = "FolderName already exists!";
+            }
         }
         else{
-            if(!(addIdEditText.getText().toString().isEmpty()||addPasswordEditText.getText().toString().isEmpty()||FolderNameOrTitleEditText.getText().toString().isEmpty()))
+            if(!fileNamesHM.containsKey(FolderNameOrTitleEditText.getText().toString())&&!(addIdEditText.getText().toString().isEmpty()||addPasswordEditText.getText().toString().isEmpty()||FolderNameOrTitleEditText.getText().toString().isEmpty()))
             {
                 ListElements lee = new ListElements();
                 lee.setFolder(false);
@@ -333,6 +409,7 @@ private View.OnClickListener addDialogOkButtonListener = new View.OnClickListene
                 credentialT.setId(addIdEditText.getText().toString());
                 credentialT.setTitle(FolderNameOrTitleEditText.getText().toString());
                 dbHelper.addCredential(credentialT);
+                fileNamesHM.put(FolderNameOrTitleEditText.getText().toString(),FolderNameOrTitleEditText.getText().toString());
 //                CustomAdapter adapter = new CustomAdapter(MainLogin.this,R.layout.list_row,list);
 //                MainListView.invalidateViews();
 //                MainListView.setAdapter(adapter);
@@ -342,6 +419,9 @@ private View.OnClickListener addDialogOkButtonListener = new View.OnClickListene
                 AdderD.dismiss();
             }
             else{
+                if(fileNamesHM.containsKey(FolderNameOrTitleEditText.getText().toString()))
+                    toastText= "Title already exists";
+                else
                 toastText="Some fields are missing";
             }
 
