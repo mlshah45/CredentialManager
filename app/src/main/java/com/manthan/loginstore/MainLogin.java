@@ -6,7 +6,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -78,6 +80,17 @@ public class MainLogin extends Activity {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 String time[] = sdf.format(cal.getTime()).split(":");
                 String currentTime = time[0] + time[1];
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainLogin.this);
+                int stored_value = pref.getInt("com.manthan.loginstore.value",0);
+                Log.d("stored value",stored_value+"");
+                int timenow = Integer.parseInt(currentTime)+stored_value;
+                Log.d("timenow value",timenow+"");
+                currentTime = timenow+"";
+                Log.d("time",currentTime);
+                //for handling case of time such as 0012, 0134 etc.
+                while(currentTime.length()<4) {
+                    currentTime = "0" + currentTime;
+                }
                 //validating the input
                 if (input.getText().toString().equals(currentTime)) {
                     //if password is correct, dialogbox is removed
@@ -449,6 +462,8 @@ private View.OnClickListener addDialogOkButtonListener = new View.OnClickListene
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent settingIntent = new Intent(MainLogin.this, Settings.class);
+            startActivity(settingIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);

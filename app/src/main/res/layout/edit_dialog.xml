@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="#24282525">
 
     <EditText
         android:layout_width="match_parent"
@@ -50,8 +51,9 @@
             android:text="OK"
             android:id="@+id/EditDialogOkButton"
             android:layout_weight="1"
-            android:textSize="19sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:background="#24282525" />
 
         <Button
             android:layout_width="wrap_content"
@@ -60,7 +62,8 @@
             android:id="@+id/EditDialogCancelButton"
             android:layout_weight="1"
             android:textStyle="bold"
-            android:textSize="19sp" />
+            android:textSize="20sp"
+            android:background="#24282525" />
     </LinearLayout>
 
 </RelativeLayout>

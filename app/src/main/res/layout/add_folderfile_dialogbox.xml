@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="#24282525">
 
     <CheckBox
         android:layout_width="match_parent"
@@ -59,7 +60,8 @@
         android:layout_below="@+id/AddPasswordEditTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="#24282525">
 
         <Button
             android:layout_width="wrap_content"
@@ -68,7 +70,8 @@
             android:id="@+id/AddOkButton"
             android:layout_weight="1"
             android:textSize="19sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="#24282525" />
 
         <Button
             android:layout_width="wrap_content"
@@ -77,7 +80,8 @@
             android:id="@+id/AddCancelButton"
             android:layout_weight="1"
             android:textStyle="bold"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            android:background="#24282525" />
     </LinearLayout>
 
 </RelativeLayout>
