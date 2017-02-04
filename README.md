@@ -1,4 +1,4 @@
-# LoginStore
+# CredentialManager
 A Credentials Manager android application to store and backup all the login credentials at one place using a dynamic password.
 
 
